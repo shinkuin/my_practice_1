@@ -13,6 +13,7 @@ import torch.optim as optim #最適化アルゴリズムの使用
 import torchvision #画像処理に関係する処理の使用
 import torchvision.transforms as transforms #画像変換機能の使用
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 #%matplotlib inline
@@ -73,6 +74,12 @@ device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 print("device : ", device)
 model = Net(input_size, hidden1_size, hidden2_size, output_size).to(device) #Networkもdevice指定が必要
 print(model)
+
+#学習済みモデル保存パス設定
+weight_dir = "./weight/"
+if not os.path.exists(weight_dir):
+    os.mkdir(weight_dir)
+path = weight_dir + "practice01.pth"
 
 #損失関数 criterion：基準
 #CrossEntropyLoss：交差エントロピー誤差関数
@@ -162,6 +169,9 @@ def learning(model, train_loader, test_loader, criterion, optimizer, num_epochs,
 #学習
 num_epochs = 10
 train_loss_list, test_loss_list = learning(model, train_loader, test_loader, criterion, optimizer, num_epochs, device = device)
+
+#学習済みモデルの保存
+torch.save(model.state_dict(),path)
 
 #学習推移の確認
 plt.plot(range(len(train_loss_list)), train_loss_list, c='b', label='train loss')
